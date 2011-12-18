@@ -1,0 +1,6 @@
+This is a software framework to control the Novation Launchpad when it's not
+being used for making music.  When I'm not DJing with it, I like to use it to
+display stuff like the current time.
+
+Currently, there's no framework built (just a couple of test scripts).  That's
+coming.
