@@ -4,3 +4,16 @@ display stuff like the current time.
 
 Currently, there's no framework built (just a couple of test scripts).  That's
 coming.
+
+PLAN
+====
+
+First row contains quick access to 7 (selectable) plugins, followed by the
+selector (the mixer button).
+
+The grid and right side is completely available to the currently selected
+plugin.
+
+The selector is actually a plugin that lets you select plugins with the grid.
+You can assign a plugin to one of the 7 quick slots by pressing the associated
+button on the right-hand side.

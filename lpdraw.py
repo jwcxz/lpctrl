@@ -151,11 +151,14 @@ switch = 0x31;
 lpout.write_short(0xB0, 0x00, switch);
 switch = switch ^ 5;
 
+R = 0x03;
+G = 0x30;
+
 while True:
     while not lpin.poll():
         time.sleep(.01);
 
-    pkt = lpin.read(5);
+    pkt = lpin.read(1);
     if pkt == []:
         break;
 
