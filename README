@@ -1,19 +1,36 @@
 This is a software framework to control the Novation Launchpad when it's not
-being used for making music.  When I'm not DJing with it, I like to use it to
-display stuff like the current time.
-
-Currently, there's no framework built (just a couple of test scripts).  That's
-coming.
+being used for making music.  When I'm not DJing with it, I'd like to use it to
+display stuff like the current time since I can hang it on my wall.
 
 PLAN
 ====
 
-First row contains quick access to 7 (selectable) plugins, followed by the
-selector (the mixer button).
+    First row contains quick access to 7 (selectable) plugins, followed by the
+    selector (the mixer button).
 
-The grid and right side is completely available to the currently selected
-plugin.
+    The grid and right side is completely available to the currently selected
+    plugin.
 
-The selector is actually a plugin that lets you select plugins with the grid.
-You can assign a plugin to one of the 7 quick slots by pressing the associated
-button on the right-hand side.
+    The selector is actually a plugin that lets you select plugins with the grid.
+    You can assign a plugin to one of the 7 quick slots by pressing the associated
+    button on the right-hand side.
+
+
+STATUS
+======
+
+    Basic framework built.  Two plugins have been created: clock and draw.
+
+    You can talk to the server by connecting to it on some port (33333 default) and
+    sending commands like:
+
+        plugin [name] [args]  - switch to plugin
+        stop                  - stop current plugin
+        refresh               - refresh plugins
+        list                  - list available plugins
+        die                   - kill server
+
+    You can also quickly select one of the first 7 plugins by pressing one of the 7
+    top row keys.  The 8th is reserved for the selector, which hasn't been built
+    yet.  The selector will also let you reassign the top row buttons to
+    plugins of your choosing.
