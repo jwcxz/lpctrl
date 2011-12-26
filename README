@@ -2,6 +2,8 @@ This is a software framework to control the Novation Launchpad when it's not
 being used for making music.  When I'm not DJing with it, I'd like to use it to
 display stuff like the current time since I can hang it on my wall.
 
+For more information, see http://jwcxz.com/projects/lpctrl
+
 PLAN
 ====
 
@@ -16,8 +18,8 @@ PLAN
     button on the right-hand side.
 
 
-STATUS
-======
+USAGE
+=====
 
     Basic framework built.  Two plugins have been created: clock and draw.
 
@@ -36,3 +38,9 @@ STATUS
             - select 1 of 64 plugins on the grid
             - press one of the first 7 right-hand buttons followed by a plugin
               on the grid to switch that quickselect slot to the new plugins
+
+
+DEVELOPMENT
+===========
+
+    See plugins/README.

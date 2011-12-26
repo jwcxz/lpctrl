@@ -1,0 +1,53 @@
+BUILDING PLUGINS
+================
+
+Building plugins is pretty easy.  Basic structure is:
+
+    ---
+    import time
+    import backend.plugin
+    from backend.constants import *
+
+    class Plugin(backend.plugin.Plugin):
+        def __init__(self, dev, args):
+
+        def run(self):
+
+        def handle_input(self, pkt):
+
+        def stop(self):
+    ---
+
+The base class sets up a series of methods and variables for use.
+Plugin.dev is the pygame.midi output device.  
+
+Plugin.args allows a client connecting on a socket to pass optional
+arguments to plugins.
+
+Plugin.enabled is toggled on and off to reflect whether the plugin is
+running or not.
+
+Plugin.dbuf is the status of the double-buffer register.  It's useful when
+using Plugin.showgrid(grid, side) to update the entire grid.
+
+Plugin.top reflects the LEDs of the top row.  It's sometimes modified by
+the calling class (the main server thread).
+
+Plugin.run() is the main output thread.  Put things in a loop like:
+
+    ---
+    def run(self):
+        backend.plugin.Plugin.run(self);
+
+        # initialization stuff
+
+        while self.enabled:
+            # do stuff
+    ---
+
+Plugin.handle_input(pkt) gets a packet of the MIDI control, note, and
+velocity from the input thread.
+
+The framework is purposefully designed to expose the Launchpad output
+device.  So, look up the pygame.midi instructions for stuff like
+write_short() (it's pretty simple).
