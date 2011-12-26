@@ -1,18 +1,22 @@
 #!/usr/bin/env python2
 
 import argparse, serial, socket, sys
-
-import plugins
-
-import backend.input
-
 import pygame.midi as pm
+import plugins
+import backend.input, backend.selector
+from backend.constants import *
 
 class LPCtrl:
     def __init__(self, host='localhost', port=33333, devsig='Launchpad MIDI 1'):
         # build plugins list
         self.plugins = {};
+        self.pluglst = [];
         self.refresh_plugins();
+
+        self.qselect = ['', '', '', '', '', '', ''];
+        # assign the first 7 plugins to the quickselect slots
+        for i in xrange(min(8, len(self.pluglst))):
+            self.qselect[i] = self.pluglst[i];
 
         # connect to launchpad
         self.lpin, self.lpout = self.lp_connect(devsig);
@@ -20,11 +24,6 @@ class LPCtrl:
         # select first plugin
         self.plugin = None;
         self.input = None;
-
-        self.qselect = ['', '', '', '', '', '', ''];
-        # assign the first 7 plugins to the quickselect slots
-        for i in xrange(min(8, len(self.plugins))):
-            self.qselect[i] = self.plugins.keys()[i];
 
         # socket configuration
         self.host = host;
@@ -108,14 +107,30 @@ class LPCtrl:
         self.input = backend.input.InputHandler(self, self.lpin, self.lpout);
         self.input.start();
 
+        # reset the controller
+        self.lpout.write_short(0xB0, 0x00, 0x00);
+
         if pluginname == 'selector':
             # activate special selector plugin
-            #self.plugin = backend.selector.Plugin(self, self.lpout);
-            #self.plugin.start();
-            pass
+            self.plugin = backend.selector.Plugin(self, self.lpout);
+            self.plugin.top = [0]*8;
+            self.plugin.top[7] = LP_BTN_CLR | LP_BTN_CPY | LP_BTN_GRN;
+            self.lpout.write_short(LP_ADDR_CTRL, 
+                    LP_REGS_TPRW+0x7, 
+                    LP_BTN_CLR | LP_BTN_CPY | LP_BTN_GRN);
+            self.plugin.start();
         else:
             pluginobj = self.plugins[pluginname];
             self.plugin = pluginobj(self.lpout, args);
+
+            if pluginname in self.qselect:
+                self.plugin.top = [0]*8;
+                self.plugin.top[self.qselect.index(pluginname)] = LP_BTN_CLR | LP_BTN_CPY | LP_BTN_GRN;
+
+                self.lpout.write_short(LP_ADDR_CTRL,
+                        LP_REGS_TPRW+self.qselect.index(pluginname),
+                        LP_BTN_CLR | LP_BTN_CPY | LP_BTN_GRN);
+
             self.plugin.start();
 
     def stop_plugin(self):
@@ -130,12 +145,14 @@ class LPCtrl:
     def refresh_plugins(self):
         reload(plugins);
 
-        for p in plugins.__all__:
+        self.pluglst = plugins.__all__;
+
+        for p in self.pluglst:
             _ = __import__('plugins.'+p, globals(), locals(), [p], -1);
             reload(_);
             self.plugins[p] = _.Plugin;
 
-        print "-> Refreshed plugins: %s" % ' '.join(self.plugins.keys());
+        print "-> Refreshed plugins: %s" % ' '.join(self.pluglst);
 
     def lp_connect(self, devsig):
         devsigin = ('ALSA', devsig, 1, 0, 0);

@@ -37,10 +37,6 @@ class InputHandler(threading.Thread):
                 if p[0] == 0xB0:
                     # top row -- handle internally
                     if p[2] == 127:
-                        # turn LED on
-                        self.outdev.write_short(p[0], p[1], 
-                                LP_BTN_YLW | LP_BTN_CPY | LP_BTN_CLR);
-
                         _ = p[1] - 0x68;
                         if _ != 7 and self.parent.qselect[_] != '':
                             self.parent.stop_plugin();
@@ -49,11 +45,6 @@ class InputHandler(threading.Thread):
                             # activate special plugin selector plugin
                             self.parent.stop_plugin();
                             self.parent.activate_plugin('selector', []);
-
-                    else:
-                        # turn LED off
-                        self.outdev.write_short(p[0], p[1], 
-                                0 | LP_BTN_CPY | LP_BTN_CLR);
                         
                 else:
                     # send to plugin

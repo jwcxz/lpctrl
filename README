@@ -30,7 +30,9 @@ STATUS
         list                  - list available plugins
         die                   - kill server
 
-    You can also quickly select one of the first 7 plugins by pressing one of the 7
-    top row keys.  The 8th is reserved for the selector, which hasn't been built
-    yet.  The selector will also let you reassign the top row buttons to
-    plugins of your choosing.
+    Switching plugins:
+        - Use the top row to select the first 7 plugins
+        - Use the Mixer button to activate the selector grid, which lets you
+            - select 1 of 64 plugins on the grid
+            - press one of the first 7 right-hand buttons followed by a plugin
+              on the grid to switch that quickselect slot to the new plugins
