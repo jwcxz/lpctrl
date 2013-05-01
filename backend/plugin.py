@@ -53,7 +53,7 @@ class Plugin(threading.Thread):
         if on: v = color;
         else:  v = 0;
 
-        self.set(button, color, v);
+        self.set(button, v);
 
     def addr_to_button(self, addr):
         x = addr & 0xF;
