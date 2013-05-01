@@ -1,6 +1,11 @@
 import threading
 from backend.constants import *
 
+SLIDER_VALS = [ 0x30, 0x30,
+                0x21, 0x21,
+                0x12, 0x12,
+                0x03, 0x03 ];
+
 class Plugin(threading.Thread):
     enabled = False;
 
@@ -44,6 +49,15 @@ class Plugin(threading.Thread):
     def handle_input(self, pkt):
         pass;
 
+    def addr_to_button(self, addr):
+        x = addr & 0xF;
+        y = addr >> 4;
+        return (x,y);
+
+    def button_to_addr(self, button):
+        addr = (button[1] << 4) | (button[0]);
+        return addr;
+
     def set(self, button, color):
         val = LP_BTN_CLR | LP_BTN_CPY | color;
         addr = self.button_to_addr(button);
@@ -55,11 +69,10 @@ class Plugin(threading.Thread):
 
         self.set(button, v);
 
-    def addr_to_button(self, addr):
-        x = addr & 0xF;
-        y = addr >> 4;
-        return (x,y);
-
-    def button_to_addr(self, button):
-        addr = (button[1] << 4) | (button[0]);
-        return addr;
+    def slider(self, x, y):
+        # slider from the bottom
+        for yy in xrange(8):
+            if yy < y:
+                self.set((x, yy), 0);
+            else:
+                self.set((x, yy), SLIDER_VALS[y]);
