@@ -43,3 +43,23 @@ class Plugin(threading.Thread):
 
     def handle_input(self, pkt):
         pass;
+
+    def set(self, button, color):
+        val = LP_BTN_CLR | LP_BTN_CPY | color;
+        addr = self.button_to_addr(button);
+        self.dev.write_short(LP_ADDR_SETB, addr, val);
+
+    def push(self, button, color, on):
+        if on: v = color;
+        else:  v = 0;
+
+        self.set(button, color, v);
+
+    def addr_to_button(self, addr):
+        x = addr & 0xF;
+        y = addr >> 4;
+        return (x,y);
+
+    def button_to_addr(self, button):
+        addr = (button[1] << 4) | (button[0]);
+        return addr;
