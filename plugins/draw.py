@@ -18,16 +18,16 @@ class Plugin(backend.plugin.Plugin):
         backend.plugin.Plugin.__init__(self, dev, args);
         self.grid = [ [0]*8 for i in xrange(8) ];
 
-        self.sides = [ LP_BTN_CLR | LP_BTN_CPY,              # clear screen
-                       LP_BTN_CLR | LP_BTN_CPY,              # eraser
-                       LP_BTN_CLR | LP_BTN_CPY | LP_BTN_RED, # brightness
-                       LP_BTN_CLR | LP_BTN_CPY | LP_BTN_RED, # red
-                       LP_BTN_CLR | LP_BTN_CPY | LP_BTN_GRN, # grn
-                       LP_BTN_CLR | LP_BTN_CPY | LP_BTN_YLW, # ylw
-                       0,
-                       0 ];
-
         self.brush = [ LP_BTN_RED, 0x33 ];
+
+        self.sides = [ LP_BTN_CLR | LP_BTN_CPY | self.brush[0]&self.brush[1],  # clear screen
+                       LP_BTN_CLR | LP_BTN_CPY | LP_BTN_RED,         # red
+                       LP_BTN_CLR | LP_BTN_CPY | LP_BTN_GRN,         # grn
+                       LP_BTN_CLR | LP_BTN_CPY | LP_BTN_YLW,         # ylw
+                       LP_BTN_CLR | LP_BTN_CPY,                      # level 0
+                       LP_BTN_CLR | LP_BTN_CPY | self.brush[0]&0x11, # level 1
+                       LP_BTN_CLR | LP_BTN_CPY | self.brush[0]&0x22, # level 2
+                       LP_BTN_CLR | LP_BTN_CPY | self.brush[0]&0x33] # level 3
 
     def run(self):
         backend.plugin.Plugin.run(self);
@@ -44,23 +44,23 @@ class Plugin(backend.plugin.Plugin):
         if pkt[2] == 127:
             if x == 8:
                 # select brush
-                if y == 0:
-                    self.showgrid(self.grid, self.sides);
-                elif y == 1:
-                    self.brush[0] = LP_BTN_CLR | LP_BTN_CPY;
-                elif y == 2:
-                    if self.brush[1] == 0x11:   self.brush[1] = 0x22;
-                    elif self.brush[1] == 0x22: self.brush[1] = 0x33;
-                    else:                       self.brush[1] = 0x11;
-                elif y == 3:
-                    self.brush[0] = LP_BTN_CLR | LP_BTN_CPY | LP_BTN_RED;
-                elif y == 4:
-                    self.brush[0] = LP_BTN_CLR | LP_BTN_CPY | LP_BTN_GRN;
-                elif y == 5:
-                    self.brush[0] = LP_BTN_CLR | LP_BTN_CPY | LP_BTN_YLW;
+                if   y == 0: self.showgrid(self.grid, self.sides);
+                elif y == 1: self.brush[0] = LP_BTN_CLR | LP_BTN_CPY | LP_BTN_RED;
+                elif y == 2: self.brush[0] = LP_BTN_CLR | LP_BTN_CPY | LP_BTN_GRN;
+                elif y == 3: self.brush[0] = LP_BTN_CLR | LP_BTN_CPY | LP_BTN_YLW;
+                elif y == 4: self.brush[1] = LP_BTN_CLR | LP_BTN_CPY;
+                elif y == 5: self.brush[1] = 0x11;
+                elif y == 6: self.brush[1] = 0x22;
+                elif y == 7: self.brush[1] = 0x33;
 
-                self.sides[2] = LP_BTN_CLR | LP_BTN_CPY | (self.brush[1]&self.brush[0]);
-                self.dev.write_short(LP_ADDR_SETB, 0x28, self.sides[2]);
+                self.sides[0] = LP_BTN_CLR | LP_BTN_CPY | (self.brush[0]&self.brush[1]);
+                self.sides[5] = LP_BTN_CLR | LP_BTN_CPY | (self.brush[0]&0x11);
+                self.sides[6] = LP_BTN_CLR | LP_BTN_CPY | (self.brush[0]&0x22);
+                self.sides[7] = LP_BTN_CLR | LP_BTN_CPY | (self.brush[0]&0x33);
+                self.dev.write_short(LP_ADDR_SETB, 0x08, self.sides[0]);
+                self.dev.write_short(LP_ADDR_SETB, 0x58, self.sides[5]);
+                self.dev.write_short(LP_ADDR_SETB, 0x68, self.sides[6]);
+                self.dev.write_short(LP_ADDR_SETB, 0x78, self.sides[7]);
             else:
                 # draw!
                 self.dev.write_short(LP_ADDR_SETB, pkt[1], 
