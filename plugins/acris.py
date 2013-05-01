@@ -60,11 +60,7 @@ class Plugin(backend.plugin.Plugin):
             
         elif x < 8:
             if on:
-                for yy in xrange(8):
-                    if yy < y:
-                        self.set((x, yy), 0);
-                    else:
-                        self.set((x, yy), LP_BTN_GRN);
+                self.slider(x, y);
 
                 cmd = CMDS.keys()[x-4];
                 params = (7-y,)
