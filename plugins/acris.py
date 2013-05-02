@@ -4,17 +4,14 @@ from backend.constants import *
 
 import zmq
 
+
 CMDS = {
-        'pulse_on'   : 1,
-        'pusle_off'  : 2,
-        'set_decay'  : 3,
-        'set_speed'  : 4,
-        'set_shape'  : 5,
-        'strobe_on'  : 6,
-        'strobe_off' : 7,
-        'sine_on'    : 8,
-        'sine_off'   : 9,
+        'action_on'  : 1,
+        'action_off' : 2,
+        'set'        : 3,
+        'set_action' : 4,
         };
+
 
 class Plugin(backend.plugin.Plugin):
     def __init__(self, dev, args):
@@ -74,37 +71,28 @@ class Plugin(backend.plugin.Plugin):
             addr = (x, 7-y);
 
             if on:
-                cmd = CMDS['pulse_on'];
+                cmd = CMDS['action_on'];
             else:  
-                cmd = CMDS['pulse_off'];
+                cmd = CMDS['action_on'];
 
             sendobj = (cmd, addr);
             
         elif x < 8:
             if on:
                 self.slider(x, y);
-
-                cmd = (CMDS['set_decay'], CMDS['set_speed'], CMDS['set_shape'])[x-5];
-                params = (7-y,)
-
-                sendobj = (cmd, params);
+                params = (x-5, 7-y);
+                sendobj = (CMDS['set'], params);
 
         else:
             # special effects and shit
             self.push((x,y), LP_BTN_YLW, on);
 
-            if y == 7:
-                # strobe
-                if on:
-                    sendobj = (CMDS['strobe_on'],(None,))
-                else:
-                    sendobj = (CMDS['strobe_off'],(None,))
-
-            elif y == 6:
-                if on:
-                    sendobj = (CMDS['sine_on'],(None,))
-                else:
-                    sendobj = (CMDS['sine_off'],(None,))
+            if on:
+                if   y == 7: action = 'pulse';
+                elif y == 6: action = 'sine';
+                else:        action = 'pulse';
+                
+                sendobj = (CMDS['set_action'],(action,));
 
 
         if sendobj != None:
