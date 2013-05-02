@@ -5,14 +5,15 @@ from backend.constants import *
 import zmq
 
 CMDS = {
-        'add_pulse': 1,
-        'pulse_decay': 2,
-        'pulse_speed': 3,
-        'pulse_shape': 4,
-        'strobe_on': 5,
-        'strobe_off': 6,
-        'sine_on': 7,
-        'sine_off': 8,
+        'add_pulse'  : 1,
+        'del_pulse'  : 2,
+        'set_decay'  : 3,
+        'set_speed'  : 4,
+        'set_shape'  : 5,
+        'strobe_on'  : 6,
+        'strobe_off' : 7,
+        'sine_on'    : 8,
+        'sine_off'   : 9,
         };
 
 class Plugin(backend.plugin.Plugin):
@@ -59,14 +60,20 @@ class Plugin(backend.plugin.Plugin):
             # main mixer board
             self.push((x,y), LP_BTN_YLW, on);
             
+            addr = (x, 7-y);
+
             if on:
-                sendobj = (CMDS['add_pulse'], (x, 7-y));
+                cmd = CMDS['add_pulse'];
+            else:  
+                cmd = CMDS['del_pulse'];
+
+            sendobj = (cmd, addr);
             
         elif x < 8:
             if on:
                 self.slider(x, y);
 
-                cmd = CMDS.keys()[x-4];
+                cmd = (CMDS['set_decay'], CMDS['set_speed'], CMDS['set_shape'])[x-5];
                 params = (7-y,)
 
                 sendobj = (cmd, params);
@@ -78,15 +85,15 @@ class Plugin(backend.plugin.Plugin):
             if y == 7:
                 # strobe
                 if on:
-                    sendobj = (CMDS['strobe_on'],)
+                    sendobj = (CMDS['strobe_on'],(None,))
                 else:
-                    sendobj = (CMDS['strobe_off'],)
+                    sendobj = (CMDS['strobe_off'],(None,))
 
             elif y == 6:
                 if on:
-                    sendobj = (CMDS['sine_on'],)
+                    sendobj = (CMDS['sine_on'],(None,))
                 else:
-                    sendobj = (CMDS['sine_off'],)
+                    sendobj = (CMDS['sine_off'],(None,))
 
 
         if sendobj != None:
