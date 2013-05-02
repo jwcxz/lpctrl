@@ -26,6 +26,17 @@ class Plugin(backend.plugin.Plugin):
 
         self.grid = [ [0]*8 for i in xrange(8) ];
 
+        rc = [ [ 0x01, 0x10, 0x01, 0x01, 0x01 ],
+               [ 0x01, 0x10, 0x10, 0x10, 0x10 ] ];
+
+        for i in xrange(8):
+            for j in xrange(5):
+                self.grid[i][j] = rc[i%2][j%2];
+
+        for i in xrange(4, 8):
+            for j in xrange(5,8):
+                self.grid[i][j] = backend.plugin.SLIDER_VALS[5];
+
         self.sides = [ LP_BTN_CLR | LP_BTN_CPY,
                        LP_BTN_CLR | LP_BTN_CPY,
                        LP_BTN_CLR | LP_BTN_CPY,
@@ -58,7 +69,7 @@ class Plugin(backend.plugin.Plugin):
 
         if x < 5:
             # main mixer board
-            self.push((x,y), LP_BTN_YLW, on);
+            self.push((x,y), LP_BTN_YLW, on, self.grid[y][x]);
             
             addr = (x, 7-y);
 
