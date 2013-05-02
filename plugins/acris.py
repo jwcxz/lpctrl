@@ -44,6 +44,10 @@ class Plugin(backend.plugin.Plugin):
 
         self.zmq_pub.bind("tcp://*:44444");
 
+    def stop(self):
+        backend.plugin.Plugin.stop(self);
+        self.zmq_ctx.destroy();
+
     def handle_input(self, pkt):
         x,y = self.addr_to_button(pkt[1]);
 
