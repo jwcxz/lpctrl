@@ -63,9 +63,9 @@ class Plugin(threading.Thread):
         addr = self.button_to_addr(button);
         self.dev.write_short(LP_ADDR_SETB, addr, val);
 
-    def push(self, button, color, on):
+    def push(self, button, color, on, color_off=0):
         if on: v = color;
-        else:  v = 0;
+        else:  v = color_off;
 
         self.set(button, v);
 
