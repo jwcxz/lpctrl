@@ -5,8 +5,8 @@ from backend.constants import *
 import zmq
 
 CMDS = {
-        'add_pulse'  : 1,
-        'del_pulse'  : 2,
+        'pulse_on'   : 1,
+        'pusle_off'  : 2,
         'set_decay'  : 3,
         'set_speed'  : 4,
         'set_shape'  : 5,
@@ -74,9 +74,9 @@ class Plugin(backend.plugin.Plugin):
             addr = (x, 7-y);
 
             if on:
-                cmd = CMDS['add_pulse'];
+                cmd = CMDS['pulse_on'];
             else:  
-                cmd = CMDS['del_pulse'];
+                cmd = CMDS['pulse_off'];
 
             sendobj = (cmd, addr);
             
