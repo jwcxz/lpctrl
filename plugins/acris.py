@@ -6,10 +6,11 @@ import zmq
 
 
 CMDS = {
-        'action_on'  : 1,
-        'action_off' : 2,
-        'set'        : 3,
-        'set_action' : 4,
+        'clock_pulse' : 0,
+        'action_on'   : 1,
+        'action_off'  : 2,
+        'set'         : 3,
+        'set_action'  : 4,
         };
 
 
@@ -86,12 +87,15 @@ class Plugin(backend.plugin.Plugin):
         else:
             # effect adjustment
             if on:
-                self.set((x,y), LP_BTN_YLW);
-                if   y == 0: action = 'pulse';
-                elif y == 1: action = 'sine';
-                else:        action = 'pulse';
-                
-                sendobj = (CMDS['set_action'],(action,));
+                if y == 7:
+                    sendobj = (CMDS['clock_pulse'],(None,));
+                else:
+                    self.set((x,y), LP_BTN_YLW);
+                    if   y == 0: action = 'pulse';
+                    elif y == 1: action = 'sine';
+                    else:        action = 'pulse';
+                    
+                    sendobj = (CMDS['set_action'],(action,));
 
 
         if sendobj != None:
