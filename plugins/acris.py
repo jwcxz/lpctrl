@@ -34,7 +34,7 @@ class Plugin(backend.plugin.Plugin):
             for j in xrange(5,8):
                 self.grid[i][j] = backend.plugin.SLIDER_VALS[5];
 
-        self.sides = [ LP_BTN_CLR | LP_BTN_CPY,
+        self.sides = [ LP_BTN_CLR | LP_BTN_CPY | LP_BTN_YLW,
                        LP_BTN_CLR | LP_BTN_CPY,
                        LP_BTN_CLR | LP_BTN_CPY,
                        LP_BTN_CLR | LP_BTN_CPY,
@@ -84,12 +84,11 @@ class Plugin(backend.plugin.Plugin):
                 sendobj = (CMDS['set'], params);
 
         else:
-            # special effects and shit
-            self.push((x,y), LP_BTN_YLW, on);
-
+            # effect adjustment
             if on:
-                if   y == 7: action = 'pulse';
-                elif y == 6: action = 'sine';
+                self.set((x,y), LP_BTN_YLW);
+                if   y == 0: action = 'pulse';
+                elif y == 1: action = 'sine';
                 else:        action = 'pulse';
                 
                 sendobj = (CMDS['set_action'],(action,));
