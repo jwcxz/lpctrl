@@ -73,7 +73,7 @@ class Plugin(backend.plugin.Plugin):
             if on:
                 cmd = CMDS['action_on'];
             else:  
-                cmd = CMDS['action_on'];
+                cmd = CMDS['action_off'];
 
             sendobj = (cmd, addr);
             
