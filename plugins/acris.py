@@ -19,7 +19,7 @@ class Plugin(backend.plugin.Plugin):
 
         # zmq context
         self.zmq_ctx = zmq.Context();
-        self.zmq_pub = self.zmq_ctx.socket(zmq.PUB);
+        self.zmq_push = self.zmq_ctx.socket(zmq.PUSH);
 
         self.grid = [ [0]*8 for i in xrange(8) ];
 
@@ -51,7 +51,7 @@ class Plugin(backend.plugin.Plugin):
         self.dbuf = self.dbuf ^ ( LP_DBC_B1U | LP_DBC_B1D );
         self.showgrid(self.grid, self.sides);
 
-        self.zmq_pub.bind("tcp://*:44444");
+        self.zmq_push.connect("tcp://127.0.0.1:44444");
 
     def stop(self):
         backend.plugin.Plugin.stop(self);
@@ -96,4 +96,4 @@ class Plugin(backend.plugin.Plugin):
 
 
         if sendobj != None:
-            self.zmq_pub.send_pyobj(sendobj);
+            self.zmq_push.send_pyobj(sendobj);
