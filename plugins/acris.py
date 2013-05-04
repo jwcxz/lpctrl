@@ -29,7 +29,10 @@ class Plugin(backend.plugin.Plugin):
 
         for i in xrange(8):
             for j in xrange(5):
-                self.grid[i][j] = rc[i%2][j%2];
+                if i == 1 or i == 4 or i == 7:
+                    self.grid[i][j] = 0x11;
+                else:
+                    self.grid[i][j] = rc[i%2][j%2];
 
         for i in xrange(4, 8):
             for j in xrange(5,8):
